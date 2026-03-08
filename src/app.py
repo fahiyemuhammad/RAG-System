@@ -48,10 +48,13 @@ class RAGAssistant:
         self.llm = self._initialize_llm()
         self.vector_db = VectorDB()
         self.prompt_template = ChatPromptTemplate.from_template(
-            """You are Lexis, a precise and helpful research assistant.
+            """You are Lexis, a knowledgeable and helpful research assistant.
 
-Use the following context to answer the question.
-If the answer is not in the context, say you don't have that information in your knowledge base.
+Your job is to answer questions using the context provided below.
+- If the context contains relevant information, give a clear, thorough answer.
+- If the context only partially covers the question, answer what you can and note what is missing.
+- Only say you don't have information if the context is completely unrelated to the question.
+- Be conversational and helpful, avoid being overly cautious.
 
 Context:
 {context}
@@ -69,26 +72,26 @@ Answer:"""
             return ChatGroq(
                 api_key=os.getenv("GROQ_API_KEY"),
                 model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
-                temperature=0.0,
+                temperature=0.2,
             )
         if os.getenv("OPENAI_API_KEY"):
             return ChatOpenAI(
                 api_key=os.getenv("OPENAI_API_KEY"),
                 model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-                temperature=0.0,
+                temperature=0.2,
             )
         if os.getenv("GOOGLE_API_KEY"):
             return ChatGoogleGenerativeAI(
                 google_api_key=os.getenv("GOOGLE_API_KEY"),
                 model=os.getenv("GOOGLE_MODEL", "gemini-2.0-flash"),
-                temperature=0.0,
+                temperature=0.2,
             )
         raise ValueError("No valid LLM API key found in environment variables.")
 
     def add_documents(self, documents: List[str]) -> None:
         self.vector_db.add_documents(documents)
 
-    def invoke(self, question: str, n_results: int = 3) -> str:
+    def invoke(self, question: str, n_results: int = 5) -> str:
         results = self.vector_db.search(question, n_results=n_results)
         documents = results.get("documents", [])
         distances = results.get("distances", [])
@@ -96,20 +99,19 @@ Answer:"""
         if not documents or not documents[0]:
             return "I could not find relevant information in the knowledge base."
 
-        SIMILARITY_THRESHOLD = 0.8
+        SIMILARITY_THRESHOLD = 1.5
         filtered_chunks = [
             doc for doc, dist in zip(documents[0], distances[0])
             if dist <= SIMILARITY_THRESHOLD
         ]
 
         if not filtered_chunks:
-            return "I don't have relevant information for that question in my knowledge base."
+            filtered_chunks = documents[0][:3]
 
         context = "\n\n".join(filtered_chunks)
         return self.chain.invoke({"context": context, "question": question})
 
 
-# ── Global assistant instance ──────────────────────────────
 assistant: RAGAssistant | None = None
 
 
