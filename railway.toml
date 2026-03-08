@@ -1,5 +1,5 @@
 [build]
-rootDirectory = "src"
+builder = "nixpacks"
 
 [deploy]
-startCommand = "uvicorn app:app --host 0.0.0.0 --port $PORT"
+startCommand = "cd src && uvicorn app:app --host 0.0.0.0 --port $PORT"
