@@ -1,0 +1,57 @@
+# Core utilities
+python-dotenv~=1.1.0
+PyYAML~=6.0.2
+requests==2.32.5
+urllib3==2.5.0
+rich==14.1.0
+
+# FastAPI server
+fastapi==0.115.9
+uvicorn==0.35.0
+httpx==0.28.1
+httpcore==1.0.9
+h11==0.16.0
+
+# LangChain ecosystem (0.3.x series)
+langchain~=0.3.25
+langchain-core==0.3.76
+langchain-community==0.3.27
+langchain-text-splitters==0.3.11
+langchain-groq==0.3.8
+langchain-openai~=0.3.18
+langchain-google-genai~=2.1.0  # Will pull compatible Google SDK
+langsmith==0.4.27
+
+# Groq
+groq==0.31.1
+
+# Vector DB
+chromadb==1.4.0
+
+# Embeddings & models (CPU-friendly)
+sentence-transformers==5.1.0
+torch==2.8.0+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+transformers==4.56.1
+tokenizers==0.22.0
+safetensors==0.6.2
+huggingface-hub==0.34.4
+
+# Scientific stack
+numpy~=2.2.0
+scipy==1.13.1  # Compatible with Python 3.10
+scikit-learn==1.7.2
+pillow==11.3.0
+
+# Other dependencies
+pydantic==2.11.7
+pydantic_core==2.33.2
+typing_extensions==4.15.0
+tenacity==9.1.2
+tqdm==4.67.1
+Jinja2==3.1.6
+MarkupSafe==3.0.2
+orjson==3.11.3
+posthog==5.4.0
+protobuf==3.20.3  # Prevents ChromaDB runtime errors
